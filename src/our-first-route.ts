@@ -6,12 +6,27 @@ async function routes (fastify: FastifyInstance, options: Object) {
   }
   const collection = fastify.mongo.db.collection('test_collection')
 
-  fastify.get('/', async (request, reply) => {
+
+  // JSON 직렬화 속도를 높이려면(네, 느립니다!) response다음 예와 같이 스키마 옵션의 키를 사용하세요.
+  const serializeOptions: RouteShorthandOptions = {
+    schema: {
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            hello: { type: 'string' }
+          }
+        }
+      }
+    }
+  }
+
+  fastify.get('/',serializeOptions, async (request, reply) => {
     return { hello: 'world' }
   })
 
   // 들어오는 요청을 검증하기 위해 Fastify는 JSON 스키마를 사용합니다 .
-  const opts: RouteShorthandOptions = {
+  const verifyOptions: RouteShorthandOptions = {
     schema: {
       body: {
         typo: 'object',
@@ -23,7 +38,7 @@ async function routes (fastify: FastifyInstance, options: Object) {
     }
   }
 
-  fastify.post('/', opts, async (request, reply) => {
+  fastify.post('/', verifyOptions, async (request, reply) => {
     return { hello: 'world' }
   })
 
