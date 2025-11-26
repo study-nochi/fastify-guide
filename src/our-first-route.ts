@@ -1,4 +1,4 @@
-import {FastifyInstance} from "fastify";
+import {FastifyInstance, RouteShorthandOptions} from "fastify";
 
 async function routes (fastify: FastifyInstance, options: Object) {
   if (!fastify.mongo?.db) {
@@ -7,6 +7,23 @@ async function routes (fastify: FastifyInstance, options: Object) {
   const collection = fastify.mongo.db.collection('test_collection')
 
   fastify.get('/', async (request, reply) => {
+    return { hello: 'world' }
+  })
+
+  // 들어오는 요청을 검증하기 위해 Fastify는 JSON 스키마를 사용합니다 .
+  const opts: RouteShorthandOptions = {
+    schema: {
+      body: {
+        typo: 'object',
+        properties: {
+          someKey: { type: 'string' },
+          someOtherKey: { type: 'number' }
+        }
+      }
+    }
+  }
+
+  fastify.post('/', opts, async (request, reply) => {
     return { hello: 'world' }
   })
 
