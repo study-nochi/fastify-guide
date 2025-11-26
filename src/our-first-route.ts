@@ -1,4 +1,4 @@
-import {FastifyInstance, RouteShorthandOptions} from "fastify";
+import type {FastifyInstance, RouteShorthandOptions} from "fastify";
 
 async function routes (fastify: FastifyInstance, options: Object) {
   if (!fastify.mongo?.db) {

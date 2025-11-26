@@ -1,21 +1,15 @@
-import Fastify from 'fastify'
+import type {FastifyPluginAsync} from 'fastify'
 import dbConnector from './our-db-connector.ts'
 import firstRoute from './our-first-route.ts'
 
-const fastify = Fastify({
-  logger: true
-})
-
-fastify.register(dbConnector)
-fastify.register(firstRoute)
-
-const start = async () => {
-  try {
-    await fastify.listen({ port: 3000 })
-  } catch (err) {
-    fastify.log.error(err)
-    process.exit(1)
-  }
+const app: FastifyPluginAsync = async (fastify, opts) => {
+  fastify.register(dbConnector)
+  fastify.register(firstRoute)
 }
 
-start()
+export default app
+
+// fastify-cli 옵션도 여기에서 export 가능
+export const options = {
+  logger: true
+}

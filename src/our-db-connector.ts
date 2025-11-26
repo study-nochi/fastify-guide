@@ -1,6 +1,6 @@
 import fastifyPlugin from 'fastify-plugin'
 import fastifyMongo from '@fastify/mongodb'
-import {FastifyInstance} from "fastify"
+import type {FastifyInstance} from "fastify"
 
 async function dbConnector (fastify: FastifyInstance, options: Object) {
   fastify.register(fastifyMongo, {
