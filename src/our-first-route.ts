@@ -42,6 +42,14 @@ async function routes (fastify: FastifyInstance, options: Object) {
     return { hello: 'world' }
   })
 
+  // Fastify는 'application/json' 및 'text/plain' 요청 페이로드를 기본적으로 파싱하며, 
+  // 결과는 Fastify 요청 객체의 request.body에서 접근할 수 있습니다.
+  const requestPayloadOptions: RouteShorthandOptions = {}
+  fastify.post('/request-payload', requestPayloadOptions, async (request, reply) => {
+    return request.body
+  })
+
+
   fastify.get('/animals', async (request, reply) => {
     const result = await collection.find().toArray()
     if (result.length === 0) {
@@ -49,7 +57,7 @@ async function routes (fastify: FastifyInstance, options: Object) {
     }
     return result
   })
-
+  
   interface AnimalParams {
     animal: string;
   }
