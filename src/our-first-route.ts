@@ -1,10 +1,17 @@
 import type {FastifyInstance, RouteShorthandOptions} from "fastify";
 
 async function routes (fastify: FastifyInstance, options: Object) {
-  if (!fastify.mongo?.db) {
-    throw new Error('MongoDB connection not available')
-  }
-  const collection = fastify.mongo.db.collection('test_collection')
+  // if (!fastify.mongo?.db) {
+  //   throw new Error('MongoDB connection not available')
+  // }
+  // const collection = fastify.mongo.db.collection('test_collection')
+
+  // 임시 데이터
+  const mockAnimals = [
+    { animal: 'dog', age: 3 },
+    { animal: 'cat', age: 2 },
+    { animal: 'bird', age: 1 }
+  ]
 
 
   // JSON 직렬화 속도를 높이려면(네, 느립니다!) response다음 예와 같이 스키마 옵션의 키를 사용하세요.
@@ -29,7 +36,7 @@ async function routes (fastify: FastifyInstance, options: Object) {
   const verifyOptions: RouteShorthandOptions = {
     schema: {
       body: {
-        typo: 'object',
+        type: 'object',
         properties: {
           someKey: { type: 'string' },
           someOtherKey: { type: 'number' }
@@ -51,11 +58,12 @@ async function routes (fastify: FastifyInstance, options: Object) {
 
 
   fastify.get('/animals', async (request, reply) => {
-    const result = await collection.find().toArray()
-    if (result.length === 0) {
-      throw new Error('No documents found')
-    }
-    return result
+    // const result = await collection.find().toArray()
+    // if (result.length === 0) {
+    //   throw new Error('No documents found')
+    // }
+    // return result
+    return mockAnimals
   })
   
   interface AnimalParams {
@@ -63,7 +71,12 @@ async function routes (fastify: FastifyInstance, options: Object) {
   }
 
   fastify.get<{ Params: AnimalParams }>('/animals/:animal', async (request, reply) => {
-    const result = await collection.findOne({ animal: request.params.animal })
+    // const result = await collection.findOne({ animal: request.params.animal })
+    // if (!result) {
+    //   throw new Error('Invalid value')
+    // }
+    // return result
+    const result = mockAnimals.find(a => a.animal === request.params.animal)
     if (!result) {
       throw new Error('Invalid value')
     }
@@ -88,8 +101,11 @@ async function routes (fastify: FastifyInstance, options: Object) {
 
   fastify.post<{ Body: AnimalBody }>('/animals', { schema }, async (request, reply) => {
     // we can use the `request.body` object to get the data sent by the client
-    const result = await collection.insertOne({ animal: request.body.animal })
-    return result
+    // const result = await collection.insertOne({ animal: request.body.animal })
+    // return result
+    const newAnimal = { animal: request.body.animal, age: 0 }
+    mockAnimals.push(newAnimal)
+    return { acknowledged: true, insertedId: Math.random().toString(36).substr(2, 9) }
   })
 }
 

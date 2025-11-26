@@ -8,7 +8,7 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "fastify start src/server.ts",
+    "start": "fastify start src/server.ts --watch",
     "dev": "node src/server.ts --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
