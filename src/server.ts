@@ -1,17 +1,14 @@
-// ESM
 import Fastify from 'fastify'
+import dbConnector from './our-db-connector.ts'
+import firstRoute from './our-first-route.ts'
 
 const fastify = Fastify({
   logger: true
 })
 
-fastify.get('/', async (request, reply) => {
-  return { hello: 'world' }
-})
+fastify.register(dbConnector)
+fastify.register(firstRoute)
 
-/**
- * Run the server!
- */
 const start = async () => {
   try {
     await fastify.listen({ port: 3000 })
