@@ -1,6 +1,9 @@
 import {FastifyInstance} from "fastify";
 
 async function routes (fastify: FastifyInstance, options: Object) {
+  if (!fastify.mongo?.db) {
+    throw new Error('MongoDB connection not available')
+  }
   const collection = fastify.mongo.db.collection('test_collection')
 
   fastify.get('/', async (request, reply) => {
@@ -15,7 +18,11 @@ async function routes (fastify: FastifyInstance, options: Object) {
     return result
   })
 
-  fastify.get('/animals/:animal', async (request, reply) => {
+  interface AnimalParams {
+    animal: string;
+  }
+
+  fastify.get<{ Params: AnimalParams }>('/animals/:animal', async (request, reply) => {
     const result = await collection.findOne({ animal: request.params.animal })
     if (!result) {
       throw new Error('Invalid value')
